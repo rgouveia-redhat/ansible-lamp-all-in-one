@@ -1,0 +1,22 @@
+---
+- name: Wordpresss | Ensure that installation directory exists
+  file: path={{wp_install_dir|dirname}} state=directory owner=apache group=apache mode=0775
+
+- name: Wordpresss | Download {{wp_version}} to /tmp
+  get_url: url=https://wordpress.org/latest.tar.gz force=no dest=/tmp/latest.tar.gz
+
+- name: Wordpresss | Extract archive
+  unarchive: src=/tmp/latest.tar.gz dest={{ wp_install_dir }} extra_opts="--strip-components=1" copy=no owner=apache group=apache
+
+#- name: Wordpresss | Remove wordpress-{{wp_version}}.tar.gz
+#  file: path=/tmp/wordpress-{{wp_version}}.tar.gz state=absent
+
+- name: Wordpresss | Fetch random salts for wp-config.php
+  uri: url="https://api.wordpress.org/secret-key/1.1/salt/" return_content=yes
+  register: wp_salt
+
+- name: Wordpresss | Copy wp-config.php file
+  template: src=wp-config.php.j2 dest={{wp_install_dir}}/wp-config.php owner=apache group=apache mode=0640
+
+#- name: Wordpresss | Change ownership of uploads directory
+#  file: path={{wp_install_dir}}/wp-content/uploads/ owner=www-data group=www-data state=directory recurse=yes

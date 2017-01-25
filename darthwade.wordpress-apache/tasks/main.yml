@@ -1,0 +1,9 @@
+---
+- name: WordPress | Apache | Copy virtual host configuration file
+  template: src=apache-vhost.conf.j2 dest=/etc/httpd/{{wp_apache_hostname}}.conf owner=root group=root mode=0644
+
+- name: WordPress | Apache | Set SELinux Boolean to allow Apache to connect to remote database
+  seboolean: name=httpd_can_network_connect_db persistent=yes state=yes
+
+- name: WordPress | Apache | Start end enable Apache Service
+  service: name=httpd enabled=yes state=restarted
