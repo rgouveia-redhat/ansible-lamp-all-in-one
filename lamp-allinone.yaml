@@ -1,5 +1,5 @@
 ---
-- hosts: server
+- hosts: all-servers
   tasks:
 
   - name: Update RedHat Family System
@@ -21,14 +21,14 @@
       gpgcheck: yes
 
 
-- hosts: server
+- hosts: all-servers
   vars_files:
     - vars/database.yaml
   roles:
     - geerlingguy.mysql
 
 
-- hosts: server
+- hosts: all-servers
   vars_files:
     - vars/wp.yaml
   roles:
